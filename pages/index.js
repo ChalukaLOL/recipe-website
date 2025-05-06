@@ -27,12 +27,29 @@ export default function Home({ recipes }) {
 }
 
 export async function getServerSideProps() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recipes`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recipes`);
+    const contentType = res.headers.get('content-type');
+    if (!res.ok || !contentType?.includes('application/json')) {
+      const errorText = await res.text();
+      console.error('API error response:', errorText);
+      throw new Error('Invalid API response');
+    }
 
-  return {
-    props: {
-      recipes: data.data ?? [], 
-    },
-  };
+    const data = await res.json();
+
+    return {
+      props: {
+        recipes: data.data ?? [],
+      },
+    };
+  } catch (error) {
+    console.error('getServerSideProps error:', error);
+    return {
+      props: {
+        recipes: [],
+      },
+    };
+  }
 }
+
