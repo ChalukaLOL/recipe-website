@@ -1,0 +1,37 @@
+/* เปลี่ยนสีพื้นหลังของ body (ทั้งหน้าเว็บ) */
+body {
+    background-color: #f4f4f4; /* สีเทาอ่อน */
+  }
+  
+  /* จัดรูปแบบ heading h1 */
+  h1 {
+    font-size: 2.5em; /* ขนาดตัวอักษรใหญ่ขึ้น */
+    color: #333; /* สีตัวอักษรเข้มขึ้น */
+    text-align: center; /* จัดข้อความให้อยู่ตรงกลาง */
+    margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */
+  }
+  
+  /* จัดรูปแบบ container */
+  .container {
+    background-color: #fff; /* สีพื้นหลังเป็นสีขาว */
+    padding: 20px; /* เพิ่มระยะห่างภายใน */
+    border-radius: 8px; /* ทำให้ขอบมน */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เพิ่มเงาเล็กน้อย */
+    margin: 20px auto; /* จัดให้อยู่ตรงกลางและมีระยะห่างด้านบน/ล่าง */
+    max-width: 800px; /* กำหนดความกว้างสูงสุด */
+  }
+  
+  /* ตัวอย่างการจัดรูปแบบรายการ ul และ li */
+  ul {
+    list-style: none; /* เอาสัญลักษณ์หน้า li ออก */
+    padding: 0;
+  }
+  
+  li {
+    padding: 8px 0; /* เพิ่มระยะห่างบน/ล่าง */
+    border-bottom: 1px solid #eee; /* เพิ่มเส้นแบ่ง */
+  }
+  
+  li:last-child {
+    border-bottom: none; /* ไม่แสดงเส้นแบ่งสำหรับรายการสุดท้าย */
+  }

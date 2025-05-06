@@ -5,7 +5,7 @@ import Head from 'next/head';
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const filteredRecipes = recipes.filter(recipe =>
     recipe.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -27,45 +27,66 @@ export default function Home() {
     fetchRecipes();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-900 text-white"> {/* Dark background and text */}
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="bg-gray-900 text-white min-h-screen"> {/* Dark background and text */}
       <Head>
-        <title>เว็บไซต์สูตรอาหาร</title>
+        <title>สุดยอดเว็บไซต์สูตรอาหาร</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto py-8 px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold text-orange-600">สูตรอาหารยอดนิยม</h1>
+      <header className="bg-gray-800 shadow-md py-6 border-b border-gray-700"> {/* Dark header background and border */}
+        <div className="container mx-auto px-4 flex justify-between items-center">
+          <Link href="/">
+            <h1 className="text-3xl font-bold text-orange-500 hover:text-orange-400 transition duration-300">
+              ครัวอร่อยเด็ด
+            </h1>
+          </Link>
           <div className="flex gap-3">
             <Link href="/add-recipe">
-              <button className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition">
-                ➕ เพิ่มสูตรอาหาร
+              <button className="px-5 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300 shadow-sm border border-green-600">
+                ➕ เพิ่มสูตรใหม่
               </button>
             </Link>
           </div>
         </div>
+      </header>
 
-        {/* ช่องค้นหา */}
-        <input
-          type="text"
-          placeholder="ค้นหาสูตรอาหาร..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded mb-6"
-        />
+      <main className="container mx-auto py-8 px-4">
+        <div className="mb-6 p-4 bg-gray-800 rounded-lg shadow-sm border border-gray-700"> {/* Dark search background and border */}
+          <input
+            type="text"
+            placeholder="ค้นหาสูตรอาหารที่คุณชื่นชอบ..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-md focus:ring-orange-500 focus:border-orange-500"
+          />
+        </div>
 
-        {/* รายการสูตรอาหาร */}
+        <h2 className="text-2xl font-semibold text-gray-300 mb-4 border-b-2 border-orange-400 pb-2">สูตรอาหารแนะนำ</h2> {/* Light heading and border */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRecipes.length > 0 ? (
             filteredRecipes.map((recipe) => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))
           ) : (
-            <p className="text-center col-span-full">ไม่พบสูตรอาหาร</p>
+            <div className="text-center col-span-full p-6 bg-gray-800 rounded-lg shadow-sm border border-gray-700"> {/* Dark no-recipes background and border */}
+              <p className="text-gray-400">ไม่พบสูตรอาหารที่ตรงกับการค้นหาของคุณ</p> {/* Light no-recipes text */}
+            </div>
           )}
         </div>
       </main>
+
+      <footer className="bg-gray-800 py-4 text-center text-gray-500 text-sm mt-8 border-t border-gray-700"> {/* Dark footer background and border */}
+        <p>&copy; 2025 เว็บไซต์สูตรอาหาร. สงวนลิขสิทธิ์.</p>
+      </footer>
     </div>
   );
 }
