@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 export default function RecipeCard({ recipe }) {
   return (
+    
     <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* รูปภาพเมนู */}
       {recipe.image && (
@@ -29,6 +30,8 @@ export default function RecipeCard({ recipe }) {
           ดูสูตรอาหาร
         </Link>
       </div>
+      
     </div>
+    
   );
 }
