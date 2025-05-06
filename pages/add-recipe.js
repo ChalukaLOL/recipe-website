@@ -41,76 +41,68 @@ export default function AddRecipePage() {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4">เพิ่มสูตรอาหารใหม่</h1>
-      {error && <p className="text-red-500 mb-2">{error}</p>}
-      <form onSubmit={handleSubmit} className="max-w-lg">
-        <div className="mb-4">
-          <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">ชื่อสูตรอาหาร:</label>
-          <input
-            type="text"
-            id="title"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-orange-100 via-white to-yellow-50 flex justify-center items-start py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl">
+        <h2 className="text-3xl font-extrabold text-gray-800 text-center">เพิ่มสูตรอาหารใหม่ 🍳</h2>
+        
+        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+        
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <InputField id="title" label="ชื่อสูตรอาหาร" value={title} onChange={setTitle} required />
+            <TextAreaField id="ingredients" label="ส่วนผสม" value={ingredients} onChange={setIngredients} required rows={4} />
+            <TextAreaField id="instructions" label="วิธีทำ" value={instructions} onChange={setInstructions} required rows={6} />
+            <InputField id="category" label="หมวดหมู่" value={category} onChange={setCategory} />
+            <InputField id="image_url" label="URL รูปภาพ" type="url" value={image_url} onChange={setImageUrl} />
+          </div>
 
-        <div className="mb-4">
-          <label htmlFor="ingredients" className="block text-gray-700 text-sm font-bold mb-2">ส่วนผสม:</label>
-          <textarea
-            id="ingredients"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            value={ingredients}
-            onChange={(e) => setIngredients(e.target.value)}
-            rows="4"
-            required
-          />
-        </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full flex justify-center py-3 px-4 border border-transparent text-white bg-orange-500 hover:bg-orange-600 font-semibold rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 transition"
+          >
+            {loading ? 'กำลังเพิ่ม...' : 'เพิ่มสูตรอาหาร'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
-        <div className="mb-4">
-          <label htmlFor="instructions" className="block text-gray-700 text-sm font-bold mb-2">วิธีทำ:</label>
-          <textarea
-            id="instructions"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-            rows="6"
-            required
-          />
-        </div>
+// ✅ Reusable InputField component
+function InputField({ id, label, value, onChange, type = "text", required = false }) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <input
+        type={type}
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required={required}
+        className="appearance-none rounded-xl relative block w-full px-4 py-2 border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-orange-400 focus:border-orange-400 transition sm:text-sm"
+      />
+    </div>
+  );
+}
 
-        <div className="mb-4">
-          <label htmlFor="category" className="block text-gray-700 text-sm font-bold mb-2">หมวดหมู่:</label>
-          <input
-            type="text"
-            id="category"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="image_url" className="block text-gray-700 text-sm font-bold mb-2">URL รูปภาพ:</label>
-          <input
-            type="url"
-            id="image_url"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            value={image_url}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          disabled={loading}
-        >
-          {loading ? 'กำลังเพิ่ม...' : 'เพิ่มสูตรอาหาร'}
-        </button>
-      </form>
+// ✅ Reusable TextAreaField component
+function TextAreaField({ id, label, value, onChange, required = false, rows = 4 }) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <textarea
+        id={id}
+        rows={rows}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required={required}
+        className="appearance-none rounded-xl relative block w-full px-4 py-2 border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-orange-400 focus:border-orange-400 transition sm:text-sm"
+      ></textarea>
     </div>
   );
 }
