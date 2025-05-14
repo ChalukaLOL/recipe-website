@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 const filePath = path.join(process.cwd(), 'users.json');
-const SECRET_KEY = 'your-secret-key'; // ควรเก็บใน ENV
+const SECRET_KEY = 'your-secret-key';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });

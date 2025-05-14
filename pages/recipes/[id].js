@@ -1,39 +1,41 @@
-// pages/recipes/[id].js
-import Head from 'next/head';
-import Link from 'next/link'; // Import Link component for navigation
-import RecipeDetail from '../../components/RecipeDetail';
+import fs from 'fs';
+import path from 'path';
+import Link from 'next/link';
 
-export default function RecipePage({ recipe }) {
+export default function RecipeDetails({ recipe }) {
   if (!recipe) {
-    return <div>Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center text-white">ไม่พบสูตรอาหารที่คุณต้องการ</div>;
   }
 
   return (
-    <div>
-      <Head>
-        <title>{recipe.title}</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div className="min-h-screen bg-gray-900 text-white p-8">
+      <div className="max-w-3xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h1 className="text-4xl font-bold mb-4">{recipe.title}</h1>
+        {recipe.image_url && <img src={recipe.image_url} alt={recipe.title} className="w-full h-64 object-cover rounded-md mb-4" />}
+        <p className="text-sm text-gray-400">หมวดหมู่: {recipe.category}</p>
 
-      <main className="container mx-auto py-8">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">{recipe.title}</h1>
-          <Link href={`/recipes/EditRecipeButton/${recipe.id}`} legacyBehavior>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              แก้ไข
-            </button>
-          </Link>
-        </div>
-        <RecipeDetail recipe={recipe} />
-      </main>
+        <h2 className="text-2xl font-semibold mt-4">ส่วนผสม</h2>
+        <p className="mt-2 whitespace-pre-line">{recipe.ingredients}</p>
+
+        <h2 className="text-2xl font-semibold mt-4">วิธีทำ</h2>
+        <p className="mt-2 whitespace-pre-line">{recipe.instructions}</p>
+
+        <Link href="/" className="inline-block mt-6 text-orange-400 hover:text-orange-300">⬅️ กลับไปที่หน้าหลัก</Link>
+      </div>
     </div>
   );
 }
 
 export async function getServerSideProps({ params }) {
-  const { id } = params;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recipes/${id}`);
-  const recipe = await res.json();
+  const filePath = path.join(process.cwd(), 'data', 'recipes.json');
+  let recipes = [];
+
+  if (fs.existsSync(filePath)) {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    recipes = JSON.parse(fileContent);
+  }
+
+  const recipe = recipes.find((r) => r.id.toString() === params.id) || null;
 
   return {
     props: {

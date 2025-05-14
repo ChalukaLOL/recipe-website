@@ -1,47 +1,15 @@
+import fs from 'fs';
+import path from 'path';
 import Link from 'next/link';
-import RecipeCard from '../components/RecipeCard';
-import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useState } from 'react';
 
-export default function Home() {
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function Home({ recipes }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const router = useRouter();
-
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      router.push('/login');
-    } else {
-      fetchRecipes();
-    }
-  }, []);
-
-  const fetchRecipes = async () => {
-    try {
-      const res = await fetch('/api/recipes');
-      const data = await res.json();
-      setRecipes(data.data || []);
-    } catch (err) {
-      console.error('โหลดสูตรอาหารล้มเหลว', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredRecipes = recipes.filter(recipe =>
     recipe.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-gray-900 text-white min-h-screen">
@@ -68,26 +36,37 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto py-8 px-4">
-        <div className="mb-6 p-4 bg-gray-800 rounded-lg shadow-sm border border-gray-700">
-          <input
-            type="text"
-            placeholder="ค้นหาสูตรอาหารที่คุณชื่นชอบ..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-md focus:ring-orange-500 focus:border-orange-500"
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="ค้นหาสูตรอาหารที่คุณชื่นชอบ..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full max-w-sm h-48 object-cover mt-3 rounded-md mx-auto"/>
 
         <h2 className="text-2xl font-semibold text-gray-300 mb-4 border-b-2 border-orange-400 pb-2">สูตรอาหารแนะนำ</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRecipes.length > 0 ? (
             filteredRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <div key={recipe.id} className="bg-white text-gray-800 p-4 rounded-xl shadow-md">
+                <h2 className="text-2xl font-semibold mb-2">{recipe.title}</h2>
+                <Link href={`/recipes/${recipe.id}`}>
+                  <button className="mt-4 w-full py-2 px-4 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition duration-300">
+                    ดูรายละเอียด
+                  </button>
+                </Link>
+                <p className="text-sm text-gray-600">หมวดหมู่: {recipe.category}</p>
+                {recipe.image_url && (
+  <img
+    src={recipe.image_url}
+    alt={recipe.title}
+    className="w-full max-w-[300px] h-[200px] object-cover mt-3 rounded-md mx-auto"
+  />
+)}
+               
+              </div>
             ))
           ) : (
-            <div className="text-center col-span-full p-6 bg-gray-800 rounded-lg shadow-sm border border-gray-700">
-              <p className="text-gray-400">ไม่พบสูตรอาหารที่ตรงกับการค้นหาของคุณ</p>
-            </div>
+            <p className="text-center text-gray-400">ไม่พบสูตรอาหารที่ตรงกับการค้นหาของคุณ</p>
           )}
         </div>
       </main>
@@ -97,4 +76,27 @@ export default function Home() {
       </footer>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const filePath = path.join(process.cwd(), 'data', 'recipes.json');
+  let recipes = [];
+
+  if (fs.existsSync(filePath)) {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    recipes = JSON.parse(fileContent);
+
+    recipes.sort((a, b) => a.title.localeCompare(b.title));
+
+    recipes = recipes.map((recipe, index) => ({
+      ...recipe,
+      id: recipe.id ? recipe.id : index + 1
+    }));
+  }
+
+  return {
+    props: {
+      recipes,
+    },
+  };
 }

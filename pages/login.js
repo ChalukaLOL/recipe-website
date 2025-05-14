@@ -9,7 +9,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -17,7 +17,7 @@ export default function Login() {
 
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem('token', data.token); // Store JWT
+        localStorage.setItem('token', data.token); 
         router.push('/');
       } else {
         alert(data.message || 'เข้าสู่ระบบล้มเหลว');

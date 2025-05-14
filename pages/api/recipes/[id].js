@@ -1,19 +1,27 @@
-// pages/api/recipes/[id].js
-import { query } from '../../../lib/db';
- 
-export default async function handler(req, res) {
-  const { id } = req.query;
- 
-  try {
-    const recipe = await query('SELECT * FROM recipes WHERE id = ?', [id]);
- 
-    if (!recipe || recipe.length === 0) {
-      return res.status(404).json({ error: 'Recipe not found' });
-    }
- 
-    res.status(200).json(recipe[0]);
-  } catch (error) {
-    console.error(`Error fetching recipe with ID ${id}:`, error);
-    res.status(500).json({ error: `Failed to fetch recipe with ID ${id}` });
+import fs from 'fs';
+import path from 'path';
+
+export async function getServerSideProps(context) {
+  const { id } = context.params;
+  const filePath = path.join(process.cwd(), 'data', 'recipes.json');
+  let recipes = [];
+
+  if (fs.existsSync(filePath)) {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    recipes = JSON.parse(fileContent);
   }
+
+  const recipe = recipes.find((r) => String(r.id) === String(id));
+
+  if (!recipe) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      recipe,
+    },
+  };
 }
